@@ -1,0 +1,37 @@
+---
+- name: Configure Web Server
+  hosts: web
+  become: yes
+
+  tasks:
+
+    - name: Update packages
+      yum:
+        name: "*"
+        state: latest
+
+    - name: Install Git
+      yum:
+        name: git
+        state: present
+
+    - name: Install Node.js
+      shell: |
+        curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
+        yum install -y nodejs
+
+    - name: Clone TravelMemory Repository
+      git:
+        repo: https://github.com/UnpredictablePrashant/TravelMemory.git
+        dest: /opt/TravelMemory
+        force: yes
+
+    - name: Install Backend Dependencies
+      shell: |
+        cd /opt/TravelMemory/backend
+        npm install
+
+    - name: Install Frontend Dependencies
+      shell: |
+        cd /opt/TravelMemory/frontend
+        npm install
